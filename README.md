@@ -16,7 +16,7 @@ src/
 │   ├── HomeScreen.tsx  # Home dashboard
 │   └── index.ts        # Screen exports
 └── theme/              # Design system
-    ├── colors.ts       # Medical-themed color palette
+    ├── colors.ts       # color palette
     ├── spacing.ts      # Spacing constants
     ├── typography.ts   # Typography system
     └── index.ts        # Theme exports

@@ -1,9 +1,8 @@
-// Medical-themed color palette
 export const colors = {
-  primary: '#0066CC', // Medical blue
+  primary: '#0066CC', 
   primaryDark: '#004C99',
   primaryLight: '#3385D6',
-  secondary: '#00A86B', // Medical green
+  secondary: '#00A86B', 
   background: '#F5F8FA',
   white: '#FFFFFF',
   text: {

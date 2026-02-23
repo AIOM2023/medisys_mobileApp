@@ -7,37 +7,33 @@ import {
   Platform,
   ScrollView,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Input, Button } from '../components';
 import { colors, spacing, typography } from '../theme';
 import { NavigationProp } from '../navigation/types';
+import { useAuth } from '../hooks/useAuth';
 
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [email, setEmail] = useState('');
+  const { login, isLoading, error } = useAuth();
+  
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const validateEmail = (text: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(text);
-  };
-
-  const handleLogin = () => {
+  const handleLogin = async () => {
     let isValid = true;
 
     // Reset errors
-    setEmailError('');
+    setUsernameError('');
     setPasswordError('');
 
-    // Validate email
-    if (!email) {
-      setEmailError('Email is required');
-      isValid = false;
-    } else if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email');
+    // Validate username
+    if (!username) {
+      setUsernameError('Username is required');
       isValid = false;
     }
 
@@ -45,13 +41,16 @@ export const LoginScreen: React.FC = () => {
     if (!password) {
       setPasswordError('Password is required');
       isValid = false;
-    } else if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
-      isValid = false;
     }
 
     if (isValid) {
-      navigation.navigate('Home');
+      try {
+        const response = await login({ username, password });
+        Alert.alert('Success', response.message);
+        navigation.navigate('Home');
+      } catch (err) {
+        Alert.alert('Login Failed', error || 'An error occurred');
+      }
     }
   };
 
@@ -73,17 +72,16 @@ export const LoginScreen: React.FC = () => {
 
         <View style={styles.form}>
           <Input
-            label="Email Address"
-            placeholder="Enter your email"
-            value={email}
+            label="Username"
+            placeholder="Enter your username"
+            value={username}
             onChangeText={text => {
-              setEmail(text);
-              setEmailError('');
+              setUsername(text);
+              setUsernameError('');
             }}
-            error={emailError}
-            keyboardType="email-address"
+            error={usernameError}
             autoCapitalize="none"
-            autoComplete="email"
+            autoComplete="username"
           />
 
           <Input
@@ -100,7 +98,12 @@ export const LoginScreen: React.FC = () => {
             autoComplete="password"
           />
 
-          <Button title="Login" onPress={handleLogin} style={styles.button} />
+          <Button 
+            title={isLoading ? "Logging in..." : "Login"} 
+            onPress={handleLogin} 
+            style={styles.button}
+            disabled={isLoading}
+          />
 
           {/* <Text style={styles.footerText}>
             

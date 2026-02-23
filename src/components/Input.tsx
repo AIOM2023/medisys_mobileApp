@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { colors, spacing, typography } from '../theme';
+import { EyeIcon, EyeOffIcon } from '../assets/icons';
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -37,7 +38,11 @@ export const Input: React.FC<InputProps> = ({
           <TouchableOpacity
             style={styles.eyeButton}
             onPress={() => setIsSecure(!isSecure)}>
-            <Text style={styles.eyeText}>{isSecure ? '👁️' : '👁️‍🗨️'}</Text>
+            {isSecure ? (
+              <EyeOffIcon color={colors.text.light} />
+            ) : (
+              <EyeIcon color={colors.text.light} />
+            )}
           </TouchableOpacity>
         )}
       </View>
@@ -78,9 +83,6 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     justifyContent: 'center',
-  },
-  eyeText: {
-    fontSize: typography.fontSize.lg,
   },
   errorText: {
     color: colors.error,
