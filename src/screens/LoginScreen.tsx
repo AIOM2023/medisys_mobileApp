@@ -8,6 +8,7 @@ import {
   ScrollView,
   StatusBar,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Input, Button } from '../components';
@@ -18,7 +19,7 @@ import { useAuth } from '../hooks/useAuth';
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const { login, isLoading, error } = useAuth();
-  
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [usernameError, setUsernameError] = useState('');
@@ -98,16 +99,20 @@ export const LoginScreen: React.FC = () => {
             autoComplete="password"
           />
 
-          <Button 
-            title={isLoading ? "Logging in..." : "Login"} 
-            onPress={handleLogin} 
+          <Button
+            title={isLoading ? "Logging in..." : "Login"}
+            onPress={handleLogin}
             style={styles.button}
             disabled={isLoading}
           />
 
-          {/* <Text style={styles.footerText}>
-            
-          </Text> */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Register')}
+            style={styles.linkContainer}>
+            <Text style={styles.footerText}>
+              Don't have an account? <Text style={styles.linkText}>Register</Text>
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -173,5 +178,13 @@ const styles = StyleSheet.create({
     color: colors.text.secondary,
     fontSize: typography.fontSize.xs,
     marginTop: spacing.md,
+  },
+  linkContainer: {
+    marginTop: spacing.md,
+    alignItems: 'center',
+  },
+  linkText: {
+    color: colors.primary,
+    fontWeight: typography.fontWeight.bold,
   },
 });
