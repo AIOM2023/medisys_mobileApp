@@ -8,7 +8,7 @@ export const HomeScreen: React.FC = () => {
       <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
       <View style={styles.content}>
         <Text style={styles.welcomeIcon}>🏥</Text>
-        <Text style={styles.title}>Welcome to Medisys</Text>
+        <Text style={styles.title}>Welcome to EASYDOC</Text>
         <Text style={styles.subtitle}>This is dashboard screen</Text>
       </View>
     </View>
