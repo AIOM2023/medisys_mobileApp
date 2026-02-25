@@ -4,7 +4,18 @@ export type RootStackParamList = {
   IntroScreen: undefined;
   Login: undefined;
   Register: undefined;
-  RegisterDetails: { name: string };
+  RegisterDetails: {
+    prefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    email: string;
+    mobile: string;
+    idType: string;
+    idNumber: string;
+    gender: string;
+    fullName: string;
+  };
   RegisterPhoto: undefined;
   Home: undefined;
 };
