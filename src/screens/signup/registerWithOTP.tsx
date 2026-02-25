@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     View,
     Text,
@@ -8,56 +8,47 @@ import {
     ScrollView,
     StatusBar,
     TouchableOpacity,
+    TextInput,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
-import { Input, Button, Dropdown } from '../../components';
+import { Input, Button } from '../../components';
+import { Picker } from '@react-native-picker/picker';
 import { colors, spacing, typography } from '../../theme';
 import { NavigationProp } from '../../navigation/types';
 
 export const RegisterWithOTP: React.FC = () => {
     const navigation = useNavigation<NavigationProp>();
 
-    const [fname, setFname] = useState('');
-    const [mname, setMname] = useState('');
-    const [lname, setLname] = useState('');
-    const [gender, setGender] = useState('');
+    const firstNameRef = useRef<TextInput>(null);
+    const middleNameRef = useRef<TextInput>(null);
+    const lastNameRef = useRef<TextInput>(null);
+    const emailRef = useRef<TextInput>(null);
+    const mobileRef = useRef<TextInput>(null);
+    const idNumberRef = useRef<TextInput>(null);
+    const otpRef = useRef<TextInput>(null);
+
+    const [prefix, setPrefix] = useState('Mr');
+    const [firstName, setFirstName] = useState('');
+    const [middleName, setMiddleName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [countryCode, setCountryCode] = useState<CountryCode>('IN');
-    const [callingCode, setCallingCode] = useState('91');
     const [mobile, setMobile] = useState('');
-    const [documentType, setDocumentType] = useState('');
-    const [documentNumber, setDocumentNumber] = useState('');
+    const [idType, setIdType] = useState('Aadhar');
+    const [idNumber, setIdNumber] = useState('');
+    const [gender, setGender] = useState('Male');
     const [otp, setOtp] = useState('');
 
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isOtpLoading, setIsOtpLoading] = useState(false);
 
-    const [nameError, setNameError] = useState('');
-    const [genderError, setGenderError] = useState('');
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [mobileError, setMobileError] = useState('');
-    const [documentTypeError, setDocumentTypeError] = useState('');
-    const [documentNumberError, setDocumentNumberError] = useState('');
+    const [idNumberError, setIdNumberError] = useState('');
+    const [genderError, setGenderError] = useState('');
     const [otpError, setOtpError] = useState('');
-
-    const genderOptions = [
-        { label: 'Male', value: 'male' },
-        { label: 'Female', value: 'female' },
-        { label: 'Other', value: 'other' },
-    ];
-
-    const documentTypeOptions = [
-        { label: 'Aadhar Card', value: 'aadhar' },
-        { label: 'PAN Card', value: 'pan' },
-        { label: 'Driving Licence', value: 'driving_licence' },
-    ];
-
-    const onSelectCountry = (country: Country) => {
-        setCountryCode(country.cca2);
-        setCallingCode(country.callingCode[0]);
-    };
 
     const formatMobile = (text: string) => {
         // Remove all non-digits
@@ -77,83 +68,25 @@ export const RegisterWithOTP: React.FC = () => {
         return formatted;
     };
 
-    const formatDocumentNumber = (text: string, type: string) => {
-        if (type === 'aadhar') {
-            // Remove all non-digits
-            const cleaned = text.replace(/\D/g, '');
-            // Limit to 12 digits
-            const limited = cleaned.slice(0, 12);
-            // Apply formatting (4-4-4)
-            let formatted = limited;
-            if (limited.length > 8) {
-                formatted = `${limited.slice(0, 4)} ${limited.slice(4, 8)} ${limited.slice(8)}`;
-            } else if (limited.length > 4) {
-                formatted = `${limited.slice(0, 4)} ${limited.slice(4)}`;
-            }
-            return formatted;
-        } else if (type === 'pan') {
-            // PAN format: 5 letters, 4 digits, 1 letter (e.g., ABCDE1234F)
-            const cleaned = text.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            return cleaned.slice(0, 10);
-        } else if (type === 'driving_licence') {
-            // Driving Licence format varies, allow alphanumeric
-            const cleaned = text.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            return cleaned.slice(0, 16);
-        }
-        return text;
-    };
-
-    const getDocumentPlaceholder = (type: string) => {
-        switch (type) {
-            case 'aadhar':
-                return 'Enter 12-digit Aadhar number';
-            case 'pan':
-                return 'Enter 10-character PAN number';
-            case 'driving_licence':
-                return 'Enter Driving Licence number';
-            default:
-                return 'Enter document number';
-        }
-    };
-
-    const getDocumentMaxLength = (type: string) => {
-        switch (type) {
-            case 'aadhar':
-                return 14; // 12 digits + 2 spaces
-            case 'pan':
-                return 10;
-            case 'driving_licence':
-                return 16;
-            default:
-                return 20;
-        }
-    };
+    // formatAadhar removed
 
     const handleSendOTP = () => {
         let isValid = true;
 
         // Reset errors
-        setNameError('');
-        setGenderError('');
+        setFirstNameError('');
+        setLastNameError('');
         setEmailError('');
         setMobileError('');
-        setDocumentTypeError('');
-        setDocumentNumberError('');
+        setIdNumberError('');
+        setGenderError('');
 
-        if (!fname) {
-            setNameError('First Name is required');
+        if (!firstName) {
+            setFirstNameError('First name is required');
             isValid = false;
         }
-        if (!mname) {
-            setNameError('Middle Name is required');
-            isValid = false;
-        }
-        if (!lname) {
-            setNameError('Last Name is required');
-            isValid = false;
-        }
-        if (!gender) {
-            setGenderError('Gender is required');
+        if (!lastName) {
+            setLastNameError('Last name is required');
             isValid = false;
         }
         if (!email) {
@@ -170,25 +103,13 @@ export const RegisterWithOTP: React.FC = () => {
             setMobileError('Mobile number must be at least 10 digits');
             isValid = false;
         }
-        if (!documentType) {
-            setDocumentTypeError('Document type is required');
+        if (!idNumber) {
+            setIdNumberError('ID number is required');
             isValid = false;
         }
-        if (!documentNumber) {
-            setDocumentNumberError('Document number is required');
+        if (!gender || gender === 'Select Gender') {
+            setGenderError('Please select your gender');
             isValid = false;
-        } else {
-            // Validate based on document type
-            if (documentType === 'aadhar' && documentNumber.replace(/\s/g, '').length !== 12) {
-                setDocumentNumberError('Aadhar number must be 12 digits');
-                isValid = false;
-            } else if (documentType === 'pan' && documentNumber.length !== 10) {
-                setDocumentNumberError('PAN number must be 10 characters');
-                isValid = false;
-            } else if (documentType === 'driving_licence' && documentNumber.length < 8) {
-                setDocumentNumberError('Please enter a valid Driving Licence number');
-                isValid = false;
-            }
         }
 
         if (isValid) {
@@ -214,7 +135,19 @@ export const RegisterWithOTP: React.FC = () => {
         setIsOtpLoading(true);
         setTimeout(() => {
             setIsOtpLoading(false);
-            navigation.navigate('RegisterDetails', { name: `${fname} ${mname} ${lname}` });
+            const fullName = `${prefix} ${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
+            navigation.navigate('RegisterDetails', {
+                prefix,
+                firstName,
+                middleName,
+                lastName,
+                email,
+                mobile,
+                idType,
+                idNumber,
+                gender,
+                fullName
+            });
         }, 1500);
     };
 
@@ -235,53 +168,89 @@ export const RegisterWithOTP: React.FC = () => {
                 </View>
 
                 <View style={styles.form}>
+                    <View style={styles.nameRow}>
+                        <View style={styles.prefixContainer}>
+                            <Text style={styles.label}>Prefix</Text>
+                            <View style={styles.pickerWrapper}>
+                                <Picker
+                                    selectedValue={prefix}
+                                    onValueChange={(itemValue) => setPrefix(itemValue)}
+                                    style={styles.picker}
+                                    mode="dropdown"
+                                    dropdownIconColor={colors.text.primary}>
+                                    <Picker.Item label="Mr" value="Mr" />
+                                    <Picker.Item label="Miss" value="Miss" />
+                                    <Picker.Item label="Mrs" value="Mrs" />
+                                </Picker>
+                            </View>
+                        </View>
+                        <View style={styles.firstNameContainer}>
+                            <Input
+                                ref={firstNameRef}
+                                label="First Name"
+                                placeholder="First name"
+                                value={firstName}
+                                onChangeText={(text) => {
+                                    setFirstName(text);
+                                    setFirstNameError('');
+                                }}
+                                error={firstNameError}
+                                autoCapitalize="words"
+                                returnKeyType="next"
+                                onSubmitEditing={() => middleNameRef.current?.focus()}
+                            />
+                        </View>
+                    </View>
+
                     <Input
-                        label="First Name"
-                        placeholder="Enter your first name"
-                        value={fname}
-                        onChangeText={(text) => {
-                            setFname(text);
-                            setNameError('');
-                        }}
-                        error={nameError}
-                        autoCapitalize="words"
-                    />
-                    <Input
+                        ref={middleNameRef}
                         label="Middle Name"
-                        placeholder="Enter your middle name"
-                        value={mname}
-                        onChangeText={(text) => {
-                            setMname(text);
-                            setNameError('');
-                        }}
-                        error={nameError}
+                        placeholder="Middle name (optional)"
+                        value={middleName}
+                        onChangeText={(text) => setMiddleName(text)}
                         autoCapitalize="words"
+                        returnKeyType="next"
+                        onSubmitEditing={() => lastNameRef.current?.focus()}
                     />
+
                     <Input
+                        ref={lastNameRef}
                         label="Last Name"
-                        placeholder="Enter your last name"
-                        value={lname}
+                        placeholder="Last name"
+                        value={lastName}
                         onChangeText={(text) => {
-                            setLname(text);
-                            setNameError('');
+                            setLastName(text);
+                            setLastNameError('');
                         }}
-                        error={nameError}
+                        error={lastNameError}
                         autoCapitalize="words"
+                        returnKeyType="next"
+                        onSubmitEditing={() => emailRef.current?.focus()}
                     />
 
-                    <Dropdown
-                        label="Gender"
-                        placeholder="Select your gender"
-                        value={gender}
-                        options={genderOptions}
-                        onSelect={(value) => {
-                            setGender(value);
-                            setGenderError('');
-                        }}
-                        error={genderError}
-                    />
+                    <View style={styles.genderContainer}>
+                        <Text style={styles.label}>Gender</Text>
+                        <View style={[styles.pickerWrapper, genderError && styles.inputError]}>
+                            <Picker
+                                selectedValue={gender}
+                                onValueChange={(itemValue) => {
+                                    setGender(itemValue);
+                                    setGenderError('');
+                                }}
+                                style={styles.picker}
+                                mode="dropdown"
+                                dropdownIconColor={colors.text.primary}>
+                                <Picker.Item label="Select Gender" value="Select Gender" />
+                                <Picker.Item label="Male" value="Male" />
+                                <Picker.Item label="Female" value="Female" />
+                                <Picker.Item label="Other" value="Other" />
+                            </Picker>
+                        </View>
+                        {genderError && <Text style={styles.errorText}>{genderError}</Text>}
+                    </View>
 
                     <Input
+                        ref={emailRef}
                         label="Contact Email"
                         placeholder="Enter your email"
                         value={email}
@@ -292,74 +261,61 @@ export const RegisterWithOTP: React.FC = () => {
                         error={emailError}
                         keyboardType="email-address"
                         autoCapitalize="none"
+                        returnKeyType="next"
+                        onSubmitEditing={() => mobileRef.current?.focus()}
                     />
 
-                    <View>
-                        <Text style={styles.label}>Mobile</Text>
-                        <View style={styles.mobileContainer}>
-                            <TouchableOpacity style={styles.countryPickerButton}>
-                                <CountryPicker
-                                    countryCode={countryCode}
-                                    withFilter
-                                    withFlag
-                                    withCallingCode
-                                    withEmoji
-                                    withCallingCodeButton
-                                    onSelect={onSelectCountry}
-                                    containerButtonStyle={styles.countryPickerContainer}
-                                />
-                                {/* <Text style={styles.callingCodeText}>+{callingCode}</Text> */}
-                            </TouchableOpacity>
-                            <View style={styles.mobileInputWrapper}>
-                                <Input
-                                    label=""
-                                    placeholder="Enter mobile number"
-                                    value={mobile}
-                                    onChangeText={(text) => {
-                                        const formatted = formatMobile(text);
-                                        setMobile(formatted);
-                                        setMobileError('');
-                                    }}
-                                    error=""
-                                    keyboardType="phone-pad"
-                                    maxLength={12} // 10 digits + 2 hyphens
-                                    style={styles.mobileInput}
-                                />
+                    <Input
+                        ref={mobileRef}
+                        label="Mobile"
+                        placeholder="Enter mobile number"
+                        value={mobile}
+                        onChangeText={(text) => {
+                            const formatted = formatMobile(text);
+                            setMobile(formatted);
+                            setMobileError('');
+                        }}
+                        error={mobileError}
+                        keyboardType="phone-pad"
+                        maxLength={12} // 10 digits + 2 hyphens
+                        returnKeyType="next"
+                        onSubmitEditing={() => idNumberRef.current?.focus()}
+                    />
+
+                    <View style={styles.nameRow}>
+                        <View style={styles.idTypeContainer}>
+                            <Text style={styles.label}>ID Type</Text>
+                            <View style={styles.pickerWrapper}>
+                                <Picker
+                                    selectedValue={idType}
+                                    onValueChange={(itemValue) => setIdType(itemValue)}
+                                    style={styles.picker}
+                                    mode="dropdown"
+                                    dropdownIconColor={colors.text.primary}>
+                                    <Picker.Item label="Aadhar Card" value="Aadhar Card" />
+                                    <Picker.Item label="PAN Card" value="PAN Card" />
+                                    <Picker.Item label="Voter ID" value="Voter ID" />
+                                    <Picker.Item label="Passport" value="Passport" />
+                                    <Picker.Item label="Driving License" value="Driving License" />
+                                </Picker>
                             </View>
                         </View>
-                        {mobileError ? <Text style={styles.errorText}>{mobileError}</Text> : null}
+                        <View style={styles.idNumberContainer}>
+                            <Input
+                                ref={idNumberRef}
+                                label="ID Number"
+                                placeholder={`Enter ${idType} number`}
+                                value={idNumber}
+                                onChangeText={(text) => {
+                                    setIdNumber(text);
+                                    setIdNumberError('');
+                                }}
+                                error={idNumberError}
+                                returnKeyType="done"
+                                onSubmitEditing={handleSendOTP}
+                            />
+                        </View>
                     </View>
-
-                    <Dropdown
-                        label="Document Type"
-                        placeholder="Select document type"
-                        value={documentType}
-                        options={documentTypeOptions}
-                        onSelect={(value) => {
-                            setDocumentType(value);
-                            setDocumentNumber(''); // Reset document number when type changes
-                            setDocumentTypeError('');
-                            setDocumentNumberError('');
-                        }}
-                        error={documentTypeError}
-                    />
-
-                    {documentType && (
-                        <Input
-                            label="Document Number"
-                            placeholder={getDocumentPlaceholder(documentType)}
-                            value={documentNumber}
-                            onChangeText={(text) => {
-                                const formatted = formatDocumentNumber(text, documentType);
-                                setDocumentNumber(formatted);
-                                setDocumentNumberError('');
-                            }}
-                            error={documentNumberError}
-                            keyboardType={documentType === 'aadhar' ? 'number-pad' : 'default'}
-                            maxLength={getDocumentMaxLength(documentType)}
-                            autoCapitalize={documentType === 'aadhar' ? 'none' : 'characters'}
-                        />
-                    )}
 
                     <Button
                         title={isLoading && !isOtpSent ? "Sending..." : "Send OTP"}
@@ -374,6 +330,7 @@ export const RegisterWithOTP: React.FC = () => {
                             <Text style={styles.statusText}>* OTP sent to mobile number</Text>
 
                             <Input
+                                ref={otpRef}
                                 label="OTP"
                                 placeholder="Enter OTP"
                                 value={otp}
@@ -384,6 +341,8 @@ export const RegisterWithOTP: React.FC = () => {
                                 error={otpError}
                                 keyboardType="number-pad"
                                 style={styles.otpInput}
+                                returnKeyType="done"
+                                onSubmitEditing={handleValidateOTP}
                             />
 
                             <Button
@@ -405,7 +364,7 @@ export const RegisterWithOTP: React.FC = () => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView >
     );
 };
 
@@ -446,14 +405,14 @@ const styles = StyleSheet.create({
         color: colors.primary,
     },
     form: {
-        backgroundColor: colors.white,
-        borderRadius: 12,
-        padding: spacing.lg,
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 3,
+        // backgroundColor: colors.white,
+        // borderRadius: 12,
+        padding: spacing.md,
+        // shadowColor: colors.shadow,
+        // shadowOffset: { width: 0, height: 2 },
+        // shadowOpacity: 0.1,
+        // shadowRadius: 8,
+        // elevation: 3,
     },
     button: {
         marginTop: spacing.md,
@@ -462,19 +421,11 @@ const styles = StyleSheet.create({
         fontSize: typography.fontSize.xs,
         color: colors.text.secondary,
         fontStyle: 'italic',
-        marginTop: spacing.md,
-        marginBottom: spacing.sm,
+        marginTop: spacing.sm,
+        marginBottom: spacing.xs,
     },
     otpInput: {
-        // marginTop: spacing.md,
-        letterSpacing: 2,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: 8,
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.sm + 4,
-        fontSize: typography.fontSize.md,
-        color: colors.text.primary
+        marginTop: spacing.md,
     },
     linkContainer: {
         marginTop: spacing.xl,
@@ -488,56 +439,52 @@ const styles = StyleSheet.create({
         color: colors.primary,
         fontWeight: typography.fontWeight.bold,
     },
+    nameRow: {
+        flexDirection: 'row',
+        gap: spacing.md,
+    },
+    prefixContainer: {
+        width: 100,
+    },
+    firstNameContainer: {
+        flex: 1,
+    },
+    idTypeContainer: {
+        flex: 1.2,
+    },
+    idNumberContainer: {
+        flex: 2,
+    },
+    genderContainer: {
+        marginBottom: spacing.md,
+    },
+    inputError: {
+        borderColor: colors.error,
+    },
+    errorText: {
+        color: colors.error,
+        fontSize: typography.fontSize.xs,
+        marginTop: spacing.xs,
+    },
     label: {
         fontSize: typography.fontSize.sm,
         fontWeight: typography.fontWeight.medium,
         color: colors.text.primary,
         marginBottom: spacing.xs,
     },
-    mobileContainer: {
-        flexDirection: 'row',
-        gap: spacing.sm,
-        alignItems: 'center',
-        height: 45,
+    pickerWrapper: {
+        backgroundColor: colors.white,
         borderWidth: 1,
         borderColor: colors.border,
         borderRadius: 8,
-        marginBottom: spacing.md,
-    },
-    countryPickerButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        // borderWidth: 1,
-        // borderColor: colors.border,
-        // borderRadius: 8,
-        paddingHorizontal: spacing.sm,
-        paddingVertical: spacing.sm,
-        backgroundColor: colors.white,
-        minWidth: 100,
-    },
-    countryPickerContainer: {
-        alignItems: 'center',
+        height: 46,
         justifyContent: 'center',
+        overflow: 'hidden',
     },
-    callingCodeText: {
-        fontSize: typography.fontSize.md,
+    picker: {
         color: colors.text.primary,
-        marginLeft: spacing.xs,
-        fontWeight: typography.fontWeight.medium,
-    },
-    mobileInputWrapper: {
-        flex: 1,
-    },
-    mobileInput: {
-        top: -10,
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.sm + 4,
-        fontSize: typography.fontSize.md,
-        color: colors.text.primary,
-    },
-    errorText: {
-        fontSize: typography.fontSize.xs,
-        color: colors.error,
-        marginTop: spacing.xs,
+        // height: 48,
+        width: '100%',
+        marginLeft: 4,
     },
 });

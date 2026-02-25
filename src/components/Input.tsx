@@ -16,12 +16,12 @@ interface InputProps extends TextInputProps {
   isPassword?: boolean;
 }
 
-export const Input: React.FC<InputProps> = ({
+export const Input = React.forwardRef<TextInput, InputProps>(({
   label,
   error,
   isPassword = false,
   ...props
-}) => {
+}, ref) => {
   const [isSecure, setIsSecure] = useState(isPassword);
 
   return (
@@ -29,6 +29,7 @@ export const Input: React.FC<InputProps> = ({
       <Text style={styles.label}>{label}</Text>
       <View style={styles.inputContainer}>
         <TextInput
+          ref={ref}
           style={[styles.input, error && styles.inputError]}
           placeholderTextColor={colors.text.light}
           secureTextEntry={isSecure}
@@ -49,7 +50,7 @@ export const Input: React.FC<InputProps> = ({
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
