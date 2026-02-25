@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen, HomeScreen, RegisterWithOTP, RegisterDetails, RegisterPhoto } from '../screens';
 import { RootStackParamList } from './types';
 import { colors } from '../theme';
+import IntroScreen from '../screens/IntroScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -11,7 +12,7 @@ export const RootNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName="IntroScreen"
         screenOptions={{
           headerStyle: {
             backgroundColor: colors.primary,
@@ -21,6 +22,11 @@ export const RootNavigator: React.FC = () => {
             fontWeight: '600',
           },
         }}>
+        <Stack.Screen
+          name="IntroScreen"
+          component={IntroScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Login"
           component={LoginScreen}

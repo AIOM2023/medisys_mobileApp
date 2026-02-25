@@ -59,7 +59,7 @@ export const LoginScreen: React.FC = () => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+            <StatusBar barStyle={'dark-content'}  backgroundColor={"#fff"} />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
@@ -67,7 +67,7 @@ export const LoginScreen: React.FC = () => {
           <View style={styles.logoContainer}>
             <Text style={styles.logoIcon}>⚕️</Text>
           </View>
-          <Text style={styles.title}>Medisys</Text>
+          <Text style={styles.title}>EASYDOC</Text>
           {/* <Text style={styles.subtitle}></Text> */}
         </View>
 
