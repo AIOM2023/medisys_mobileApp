@@ -20,7 +20,7 @@ type RegisterDetailsRouteProp = RouteProp<RootStackParamList, 'RegisterDetails'>
 export const RegisterDetails: React.FC = () => {
     const navigation = useNavigation<NavigationProp>();
     const route = useRoute<RegisterDetailsRouteProp>();
-    const { name } = route.params;
+    const { fullName } = route.params;
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -85,7 +85,7 @@ export const RegisterDetails: React.FC = () => {
                         <Text style={styles.logoIcon}>⚕️</Text>
                     </View>
                     <Text style={styles.title}>Register</Text>
-                    <Text style={styles.welcomeText}>Welcome {name}</Text>
+                    <Text style={styles.welcomeText}>Welcome {fullName}</Text>
                 </View>
 
                 <View style={styles.form}>
