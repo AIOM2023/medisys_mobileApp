@@ -51,8 +51,7 @@ export const RootNavigator: React.FC = () => {
           name="Home"
           component={HomeScreen}
           options={{
-            title: 'Home Screen',
-            headerBackVisible: false,
+           headerShown: false
           }}
         />
       </Stack.Navigator>

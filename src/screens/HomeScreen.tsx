@@ -5,7 +5,7 @@ import { colors, spacing, typography } from '../theme';
 export const HomeScreen: React.FC = () => {
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
+      <StatusBar barStyle='dark-content'  />
       <View style={styles.content}>
         <Text style={styles.welcomeIcon}>🏥</Text>
         <Text style={styles.title}>Welcome to EASYDOC</Text>

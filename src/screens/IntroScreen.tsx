@@ -31,7 +31,7 @@ const SLIDES: SlideData[] = [
         title: 'Appointments',
         description:
             'Schedule and manage your medical appointments with ease. Get reminders and stay on top of your healthcare appointments.',
-        image: 'https://static.vecteezy.com/system/resources/previews/045/757/046/non_2x/appointment-booking-flat-illustrations-vector.jpg',
+        image: require('../assets/images/appointment.jpg'),
         backgroundColor: ['#fff', '#0052CC'],
     },
     {
@@ -39,7 +39,7 @@ const SLIDES: SlideData[] = [
         title: 'Telemedicine',
         description:
             'Connect with healthcare professionals from the comfort of your home. Video consultations anytime, anywhere.',
-        image: 'https://img.freepik.com/free-vector/flat-woman-online-counseling-with-psychologist_88138-810.jpg?t=st=1771942950~exp=1771946550~hmac=39f341297f4e2f85a75576da60712eb6847c34ab1a7207342e05f6022686590a&w=1480',
+        image: require('../assets/images/telemedicine.png'),
         backgroundColor: ['#0052CC', '#0052CC'],
     },
     {
@@ -47,7 +47,7 @@ const SLIDES: SlideData[] = [
         title: 'Medical History',
         description:
             'Keep all your medical records in one secure place. Access your history anytime you need it.',
-        image:'https://img.freepik.com/premium-vector/first-aid-diagnostic-patient-card-medical-card-medical-history-vector-illustration_660702-575.jpg',
+        image: require('../assets/images/history.png'),
         backgroundColor: ['#0052CC', '#0052CC'],
     },
     {
@@ -55,7 +55,7 @@ const SLIDES: SlideData[] = [
         title: 'AI Assistant',
         description:
             'Get instant health insights with our intelligent AI assistant. Available 24/7 for your health concerns.',
-        image: 'https://img.freepik.com/free-vector/flat-woman-chatting-with-chatbot-communicating-ai-robot-assistant_88138-959.jpg?semt=ais_user_personalization&w=740&q=80',
+        image: require('../assets/images/ai-assistant.png'),
         backgroundColor: ['#0052CC', '#0052CC'],
     },
     {
@@ -63,7 +63,7 @@ const SLIDES: SlideData[] = [
         title: 'Your Profile',
         description:
             'Manage your personal health information and preferences. Keep your profile updated for better care.',
-        image: 'https://media.istockphoto.com/id/1440550553/vector/electronic-medical-card.jpg?s=612x612&w=0&k=20&c=05gdzrYPzTZsG-iRz8zFy5rYIApVNe7uoj6b2VJdqjI=',
+        image: require('../assets/images/profile.jpg'),
         backgroundColor: ['#0052CC', '#0052CC'],
     },
 ];
@@ -78,14 +78,14 @@ const Slide: React.FC<SlideProps> = ({ slide, index }) => {
         <View
             // colors={slide.backgroundColor}
             style={styles.slide}
-            // start={{ x: 0, y: 0 }}
-            // end={{ x: 1, y: 1 }}
+        // start={{ x: 0, y: 0 }}
+        // end={{ x: 1, y: 1 }}
         >
             <View style={styles.slideContent}>
                 {/* Image Container */}
                 <View style={styles.imageContainer}>
                     <Image
-                        source={{uri:slide.image}}
+                        source={slide.image}
                         style={styles.slideImage}
                         resizeMode="contain"
                     />
@@ -131,16 +131,16 @@ interface LandingPageIntroProps {
 }
 
 const IntroScreen: React.FC<LandingPageIntroProps> = () => {
-      const navigation = useNavigation<NavigationProp>();
-    
+    const navigation = useNavigation<NavigationProp>();
+
     const [activeIndex, setActiveIndex] = useState(0);
     const flatListRef = useRef<FlatList>(null);
     const backButtonOpacity = useRef(new Animated.Value(0)).current;
     const backButtonScale = useRef(new Animated.Value(0.8)).current;
     const nextButtonScale = useRef(new Animated.Value(1)).current;
 
-    const onComplete = ()=>{
-                navigation.navigate('Login');
+    const onComplete = () => {
+        navigation.navigate('Login');
     }
     const handleNext = () => {
         // Scale animation on press
@@ -198,7 +198,7 @@ const IntroScreen: React.FC<LandingPageIntroProps> = () => {
         if (viewableItems.length > 0) {
             const newIndex = viewableItems[0].index;
             setActiveIndex(newIndex);
-            
+
             // Animate back button appearance
             if (newIndex === 0) {
                 Animated.parallel([
@@ -236,7 +236,7 @@ const IntroScreen: React.FC<LandingPageIntroProps> = () => {
 
     return (
         <View style={styles.container}>
-            <StatusBar barStyle={'dark-content'}  backgroundColor={"#fff"} />
+            <StatusBar barStyle={'dark-content'}  />
             <FlatList
                 ref={flatListRef}
                 data={SLIDES}
@@ -250,30 +250,28 @@ const IntroScreen: React.FC<LandingPageIntroProps> = () => {
                 viewabilityConfig={viewabilityConfig}
             />
 
-            {/* Pagination Dots */}
             <View style={styles.paginationWrapper}>
                 <Pagination slides={SLIDES} activeIndex={activeIndex} />
             </View>
 
-            {/* Button Container */}
             <View style={styles.buttonContainer}>
-              {activeIndex !== 0 && (
-                <Animated.View
-                    style={{
-                        flex: 1,
-                        // opacity: backButtonOpacity,
-                        // transform: [{ scale: backButtonScale }],
-                    }}
-                >
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={handlePrev}
-                        activeOpacity={0.8}
+                {activeIndex !== 0 && (
+                    <Animated.View
+                        style={{
+                            flex: 1,
+                            // opacity: backButtonOpacity,
+                            // transform: [{ scale: backButtonScale }],
+                        }}
                     >
-                        <Text style={styles.buttonText}>Back</Text>
-                    </TouchableOpacity>
-                </Animated.View>
-              )}
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handlePrev}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.buttonText}>Back</Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                )}
 
                 <Animated.View
                     style={{
@@ -293,7 +291,6 @@ const IntroScreen: React.FC<LandingPageIntroProps> = () => {
                 </Animated.View>
             </View>
 
-            {/* Skip Button */}
             <TouchableOpacity
                 style={styles.skipButton}
                 onPress={onComplete}
@@ -314,7 +311,6 @@ const styles = StyleSheet.create({
         height: height,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingBottom: 120,
     },
     slideContent: {
         flex: 1,

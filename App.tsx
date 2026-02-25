@@ -4,7 +4,7 @@ import { RootNavigator } from './src/navigation/RootNavigator';
 
 function App() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1,backgroundColor:'#fff' }}>
       <RootNavigator />
     </SafeAreaView>
   );

@@ -15,13 +15,13 @@ interface ApiError {
 
 const handleApiError = (error: unknown): never => {
   if (error instanceof AxiosError) {
-    console.log(
-      error.response?.data?.message,
-      error.message,
-      error,
-      error.response?.data,
-      error.response?.status,
-    );
+    // console.log(
+    //   error.response?.data?.message,
+    //   error.message,
+    //   error,
+    //   error.response?.data,
+    //   error.response?.status,
+    // );
     const errorMessage =
       error.response?.data?.message || error.message || 'An error occurred';
     const apiError: ApiError = {
@@ -41,13 +41,13 @@ export const apiUtil = {
   ): Promise<ApiResponse<T>> {
     try {
       const response = await api.get<T>(url, config);
-      console.log('get: ', response, url, config);
+      // console.log('get: ', response, url, config);
       return {
         data: response.data,
         status: response.status,
       };
     } catch (error) {
-      console.log('get: ', error, url, config);
+      // console.log('get: ', error, url, config);
       return handleApiError(error);
     }
   },
@@ -59,13 +59,13 @@ export const apiUtil = {
   ): Promise<ApiResponse<T>> {
     try {
       const response = await api.post<T>(url, data, config);
-      console.log('post: ', response, url, data, config);
+      // console.log('post: ', response, url, data, config);
       return {
         data: response.data,
         status: response.status,
       };
     } catch (error) {
-      console.log('post: ', error, url, data, config);
+      // console.log('post: ', error, url, data, config);
       return handleApiError(error);
     }
   },
